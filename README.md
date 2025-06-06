@@ -94,11 +94,30 @@ The key features of the Data Science Multi-Agent include:
     # Vertex backend config
     GOOGLE_CLOUD_PROJECT='YOUR_VALUE_HERE'
     GOOGLE_CLOUD_LOCATION='YOUR_VALUE_HERE'
+
+    # Database backend to use: "SQLite" or "BigQuery"
+    USE_DATABASE='SQLite'
+
+    # Path to local SQLite database when USE_DATABASE=SQLite
+    SQLITE_DB_PATH='data_science/utils/data/data.db'
     ```
+
+    The agent defaults to the local SQLite database. Set `USE_DATABASE='BigQuery'`
+    if you want to connect to BigQuery instead.
 
     Follow the following steps to set up the remaining environment variables.
 
-5.  **BigQuery Setup:**
+5.  **Local SQLite Setup:**
+    The agent can run entirely locally by loading the sample CSV files into a SQLite database.
+    From the project root run:
+
+    ```bash
+    python3 data_science/utils/create_sqlite_db.py
+    ```
+
+    This will create a `data.db` file inside `data_science/utils/data/` with tables for each CSV or Excel file.
+
+6.  **BigQuery Setup:**
     These steps will load the sample data provided in this repository to BigQuery.
     For our sample use case, we are working on the Forecasting Sticker Sales data from Kaggle:
 
