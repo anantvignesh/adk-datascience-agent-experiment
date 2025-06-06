@@ -30,6 +30,9 @@ from .sub_agents import bqml_agent
 from .sub_agents.bigquery.tools import (
     get_database_settings as get_bq_database_settings,
 )
+from .sub_agents.sqlite.tools import (
+    get_database_settings as get_sqlite_database_settings,
+)
 from .prompts import return_instructions_root
 from .tools import call_db_agent, call_ds_agent
 
@@ -42,7 +45,7 @@ def setup_before_agent_call(callback_context: CallbackContext):
     # setting up database settings in session.state
     if "database_settings" not in callback_context.state:
         db_settings = dict()
-        db_settings["use_database"] = "BigQuery"
+        db_settings["use_database"] = os.getenv("USE_DATABASE", "SQLite")
         callback_context.state["all_db_settings"] = db_settings
 
     # setting up schema in instruction
@@ -55,6 +58,19 @@ def setup_before_agent_call(callback_context: CallbackContext):
             + f"""
 
     --------- The BigQuery schema of the relevant data with a few sample rows. ---------
+    {schema}
+
+    """
+        )
+    else:
+        callback_context.state["database_settings"] = get_sqlite_database_settings()
+        schema = callback_context.state["database_settings"]["ddl_schema"]
+
+        callback_context._invocation_context.agent.instruction = (
+            return_instructions_root()
+            + f"""
+
+    --------- The SQLite schema of the relevant data with a few sample rows. ---------
     {schema}
 
     """
